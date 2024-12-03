@@ -7,7 +7,7 @@ services:
     volumes:
       - ./:/var/www/html
     ports:
-      - "80:80"
+      - "8081:80"
     links:
       - db
       
@@ -18,7 +18,7 @@ services:
     image: wordpress:${WORDPRESS_VERSION}
     restart: always
     ports:
-      - 8080:80
+      - 8082:80
     environment:
       WORDPRESS_DB_HOST: ${DB_HOST}  # Se conecta al servicio db (mariaDB)
       WORDPRESS_DB_USER: ${DB_USERNAME}  # El usuario de la base de datos (wordpress)
