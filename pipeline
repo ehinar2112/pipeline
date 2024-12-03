@@ -1,54 +1,17 @@
 pipeline {
-    agent any
+  agent any
 
-    stages {
-        stage('Clone Repository') {
-            steps {
-                // Clonar el repositorio de GitHub
-                git url: 'https://github.com/ehinar2112/pipeline.git', branch: 'master'
-            }
-        }
-
-        stage('Setup WP Test Config') {
-            steps {
-                script {
-                    // Copiar wp-tests-config.php desde la ubicación en la máquina a la carpeta correcta
-                    sh '''
-                    # Ruta al archivo wp-tests-config.php en la máquina local de Jenkins
-                    cp /home/ehinar/Descargas/trunk/wp-tests-config.php ./wp-tests/wp-tests-config.php
-                    '''
-                }
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                // Instalar dependencias con Composer
-                sh 'composer install'
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                // Ejecutar las pruebas de PHPUnit
-                sh 'vendor/bin/phpunit'
-            }
-        }
-
-        stage('Cleanup') {
-            steps {
-                // Limpiar el espacio de trabajo si es necesario (opcional)
-                sh 'rm -rf ./wp-tests/wp-tests-config.php'
-            }
-        }
+  stages {
+    stage('Checkout') {
+      steps {
+        git 'https://github.com/Aahil13/WordPress-CI-CD-Pipeline-Using-Jenkins.git'
+      }
     }
 
-    post {
-        success {
-            echo 'Las pruebas fueron exitosas.'
-        }
-        failure {
-            echo 'Hubo un error en las pruebas.'
-        }
+    stage('Build') {
+      steps {
+         sh 'docker-compose -f docker-compose.yml up -d'
+      }
     }
+  }
 }
