@@ -15,7 +15,7 @@ pipeline {
                     // Copiar wp-tests-config.php desde la ubicación en la máquina a la carpeta correcta
                     sh '''
                     # Ruta al archivo wp-tests-config.php en la máquina local de Jenkins
-                    cp /ruta/a/tu/archivo/wp-tests-config.php ./wp-tests/wp-tests-config.php
+                    cp /home/ehinar/Descargas/trunk/wp-tests-config.php ./wp-tests/wp-tests-config.php
                     '''
                 }
             }
