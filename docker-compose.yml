@@ -1,3 +1,16 @@
+version: '3.1'
+
+services:
+  apache:
+    env_file: .env
+    image: httpd:${HTTPD_VERSION}
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "80:80"
+    links:
+      - db
+      
   wordpress:
     depends_on:
       - db
@@ -24,4 +37,8 @@
     command: --default-authentication-plugin=mysql_native_password
     volumes:
       - db:/var/lib/mysql
-
+      
+volumes:
+  wordpress:
+  db:
+  apache:
