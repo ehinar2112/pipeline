@@ -1,47 +1,27 @@
-version: '3.1'
-
-services:
-  apache:
-    env_file: .env
-    image: httpd:2.4
-    volumes:
-      - ./:/var/www/html
-    ports:
-      - "80:80"
-    links:
-      - db
-  
   wordpress:
     depends_on:
       - db
     env_file: .env
-    image: wordpress:latest
+    image: wordpress:${WORDPRESS_VERSION}
     restart: always
     ports:
       - 8080:80
     environment:
-      WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: gatita12
-      WORDPRESS_DB_NAME: wordpress
-    volumes:
-      - wordpress:/var/www/html
-      - ./wp-config.php:/var/www/html/wp-config.php
+      WORDPRESS_DB_HOST: ${DB_HOST}  # Se conecta al servicio db (mariaDB)
+      WORDPRESS_DB_USER: ${DB_USERNAME}  # El usuario de la base de datos (wordpress)
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}  # La contraseña de la base de datos (gatita12)
+      WORDPRESS_DB_NAME: ${DB_DATABASE}  # El nombre de la base de datos (wordpress)
 
   db:
-    image: mariadb:10.5  # Usando MariaDB en lugar de MySQL
+    image: mariadb:${DB_VERSION}  # Usando MariaDB
     restart: always
     env_file: .env
     environment:
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: gatita12
-      MYSQL_ROOT_PASSWORD: gatita12  # En lugar de MYSQL_RANDOM_ROOT_PASSWORD
+      MYSQL_DATABASE: ${DB_DATABASE}  # El nombre de la base de datos que se crea (wordpress)
+      MYSQL_USER: ${DB_USERNAME}  # El usuario para la base de datos (wordpress)
+      MYSQL_PASSWORD: ${DB_PASSWORD}  # La contraseña del usuario de la base de datos (gatita12)
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}  # Contraseña para el usuario root en MariaDB
     command: --default-authentication-plugin=mysql_native_password
     volumes:
       - db:/var/lib/mysql
 
-volumes:
-  wordpress:
-  db:
-  apache:
