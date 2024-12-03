@@ -4,7 +4,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git 'https://github.com/Aahil13/WordPress-CI-CD-Pipeline-Using-Jenkins.git'
+        git 'https://github.com/ehinar2112/pipeline.git'
       }
     }
 
