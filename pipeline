@@ -1,81 +1,54 @@
 pipeline {
-    agent any  // El pipeline puede ejecutarse en cualquier agente disponible
-
-    environment {
-        // Puedes definir variables globales si es necesario, por ejemplo:
-        BRANCH = 'main'  // Rama que se utilizará (puedes cambiarla según sea necesario)
-    }
+    agent any
 
     stages {
-        // Etapa de "Install Dependencies" para instalar las dependencias necesarias
+        stage('Clone Repository') {
+            steps {
+                // Clonar el repositorio de GitHub
+                git url: 'https://github.com/ehinar2112/pipeline.git', branch: 'master'
+            }
+        }
+
+        stage('Setup WP Test Config') {
+            steps {
+                script {
+                    // Copiar wp-tests-config.php desde la ubicación en la máquina a la carpeta correcta
+                    sh '''
+                    # Ruta al archivo wp-tests-config.php en la máquina local de Jenkins
+                    cp /ruta/a/tu/archivo/wp-tests-config.php ./wp-tests/wp-tests-config.php
+                    '''
+                }
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
-                script {
-                    // Si estás usando Composer para dependencias PHP
-                    sh 'composer install'  // Si estás usando Composer para PHP
-
-                    // Si usas npm para dependencias de frontend
-                    // sh 'npm install'
-                }
+                // Instalar dependencias con Composer
+                sh 'composer install'
             }
         }
 
-        // Etapa de "Run Tests" para ejecutar pruebas automatizadas
         stage('Run Tests') {
             steps {
-                script {
-                    // Ejecutar pruebas unitarias o de integración
-                    // Ejemplo con PHPUnit para PHP:
-                    sh 'vendor/bin/phpunit'  // Si usas PHPUnit
-
-                    // Ejemplo con otro sistema de pruebas (si tienes pruebas de JavaScript, por ejemplo):
-                    // sh 'npm test'   // Si usas Jest o Mocha para pruebas JS
-                }
+                // Ejecutar las pruebas de PHPUnit
+                sh 'vendor/bin/phpunit'
             }
         }
 
-        // Etapa de "Build" si necesitas construir la aplicación antes de desplegarla
-        stage('Build') {
+        stage('Cleanup') {
             steps {
-                script {
-                    // Ejemplo de construcción (si usas Docker)
-                    sh 'docker-compose build'  // Si usas Docker
-
-                    // O cualquier otra construcción que necesites, como empaquetar archivos o crear contenedores
-                }
-            }
-        }
-
-        // Etapa de "Deploy" para desplegar tu proyecto
-        stage('Deploy') {
-            steps {
-                script {
-                    // Desplegar el proyecto, por ejemplo, usando Docker, FTP, o un servidor remoto
-
-                    // Si estás usando Docker:
-                    sh 'docker-compose up -d'  // Levantar el contenedor en segundo plano
-
-                    // Si tu proyecto usa FTP o SSH para desplegar, podrías usar algo como:
-                    // sh 'scp -r ./dist user@yourserver:/path/to/website'
-
-                    // Si estás usando una herramienta como Ansible o AWS CLI para desplegar, ejecuta los comandos aquí.
-                }
+                // Limpiar el espacio de trabajo si es necesario (opcional)
+                sh 'rm -rf ./wp-tests/wp-tests-config.php'
             }
         }
     }
 
     post {
-        always {
-            // Tareas que siempre se ejecutan al final del pipeline, independientemente del estado (éxito o fallo)
-            echo 'El pipeline ha terminado.'
-        }
         success {
-            // Tareas que solo se ejecutan si el pipeline fue exitoso
-            echo 'El pipeline se completó exitosamente.'
+            echo 'Las pruebas fueron exitosas.'
         }
         failure {
-            // Tareas que solo se ejecutan si el pipeline falló
-            echo 'El pipeline falló.'
+            echo 'Hubo un error en las pruebas.'
         }
     }
 }
