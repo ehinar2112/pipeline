@@ -20,20 +20,20 @@ services:
     ports:
       - 8082:80
     environment:
-      WORDPRESS_DB_HOST: ${DB_HOST}  # Se conecta al servicio db (mariaDB)
-      WORDPRESS_DB_USER: ${DB_USERNAME}  # El usuario de la base de datos (wordpress)
-      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}  # La contraseña de la base de datos (gatita12)
-      WORDPRESS_DB_NAME: ${DB_DATABASE}  # El nombre de la base de datos (wordpress)
+      WORDPRESS_DB_HOST: ${DB_HOST}  
+      WORDPRESS_DB_USER: ${DB_USERNAME}  
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD} 
+      WORDPRESS_DB_NAME: ${DB_DATABASE} 
 
   db:
-    image: mariadb:${DB_VERSION}  # Usando MariaDB
+    image: mariadb:${DB_VERSION}  
     restart: always
     env_file: .env
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE}  # El nombre de la base de datos que se crea (wordpress)
-      MYSQL_USER: ${DB_USERNAME}  # El usuario para la base de datos (wordpress)
-      MYSQL_PASSWORD: ${DB_PASSWORD}  # La contraseña del usuario de la base de datos (gatita12)
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}  # Contraseña para el usuario root en MariaDB
+      MYSQL_DATABASE: ${DB_DATABASE}  
+      MYSQL_USER: ${DB_USERNAME}  
+      MYSQL_PASSWORD: ${DB_PASSWORD}  
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}  
     command: --default-authentication-plugin=mysql_native_password
     volumes:
       - db:/var/lib/mysql
